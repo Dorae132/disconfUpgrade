@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <property name="log.base" value="./logs/disconf-web"/>
+    <property name="log.monitor" value="./logs/monitor"/>
+    <property resource="rabbit.properties"/>
+
+    <jmxConfigurator/>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <Encoding>UTF-8</Encoding>
+        <encoder>
+        	<!-- %X{sessionId} %date [%thread] %-5level  -->
+            <pattern>%logger{80} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="logfile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.base}.log</File>
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.base}.log.%d{yyyy-MM-dd}</FileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="monitorlog"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <File>${log.monitor}.log</File>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.base}.log.%d{yyyy-MM-dd}</FileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.baidu.disconf.web.tasks" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="monitorlog"/>
+    </logger>
+
+    <logger name="com.baidu.disconf" additivity="false">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="org.springframework" additivity="false">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="net.sf.ehcache" additivity="false">
+        <level value="ERROR"/>
+    </logger>
+
+    <logger name="org.springmodules" additivity="false">
+        <level value="ERROR"/>
+    </logger>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="logfile"/>
+    </root>
+
+</configuration>
+

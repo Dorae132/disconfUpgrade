@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="WARN" monitorInterval="600">
+
+    <Properties>
+    </Properties>
+
+    <Appenders>
+        <!--这个输出控制台的配置-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- 控制台只输出level及以上级别的信息(onMatch),其他的直接拒绝(onMismatch) -->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--
+            	输出日志的格式 
+                %d{yyyy-MM-dd HH:mm:ss, SSS} : 日志生产时间
+                %p : 日志输出格式
+                %c : logger的名称
+                %m : 日志内容，即 logger.info("message")
+                %n : 换行符
+                %C : Java类名
+                %L : 日志输出所在行数
+                %M : 日志输出所在方法名
+                ${hostName} : 本地机器名
+             -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} ${hostName} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+
+		<RollingFile name="Trace" fileName="logs/trace.log"
+                      filePattern="logs/$${date:yyyy-MM}/trace-%d{yyyy-MM-dd}-%i.log">
+             <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+             <Policies>
+                 <TimeBasedTriggeringPolicy/>
+                 <SizeBasedTriggeringPolicy size="500 MB"/>
+             </Policies>
+             <DefaultRolloverStrategy max="20"/>
+         </RollingFile>
+         
+    </Appenders>
+
+    <Loggers>
+        <!-- 配置日志的根节点 -->
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+        </root>
+
+        <!-- 
+        	日志实例(info),其中的com.netease.beauty.bmall为指定的package，只有在该package下的logger才会采用下列模式，该logger继承root,并且将将日志输出到文件，
+        	而root将日志输出控制台,通过属性'additivity="false"'使得'com.netease.beauty.bmall'的日志不再输出到控制台 
+        -->
+        <Logger name="com.netease.beauty.bmall" level="INFO" includeLocation="true" additivity="false">
+			<appender-ref ref="Console"/>
+		</Logger>
+		
+		<logger name="trace" level="info" includeLocation="true" additivity="false">  
+            <appender-ref ref="Trace"/>  
+        </logger>
+
+    </Loggers>
+</Configuration>
